@@ -1,36 +1,39 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { search } from "./BooksAPI";
+import { search, getAll } from "./BooksAPI";
 import Book from "./Book";
 
-const Search = ({ updateBook, allBooks }) => {
+const Search = ({ updateBook }) => {
   const [input, setInput] = useState("");
+  const [allBooks, setAllBooks] = useState([]);
   const [searchResult, setSearchResult] = useState([]);
 
   useEffect(() => {
+    getAll().then((data) => {
+      setAllBooks(data);
+    });
+  }, []);
+
+  useEffect(() => {
     if (input) {
-      search(input).then((res) => {
-        if (!res.error && input.trim() !== "") {
-          let x = res.map((book) => {
-            allBooks.map((b) => {
-              if (b.id === book.id) {
-                book.shelf = b.shelf;
+      search(input).then((data) => {
+        if (!data.error) {
+          for (let b of data) {
+            b.shelf = "none";
+            for (let book of allBooks) {
+              if (book.id === b.id) {
+                b.shelf = book.shelf;
               }
-              return b;
-            });
+            }
+          }
 
-            return book;
-          });
-
-          setSearchResult([...x]);
-        } else {
-          setSearchResult([]);
+          setSearchResult(data);
         }
       });
     } else {
       setSearchResult([]);
     }
-  }, [input, allBooks]);
+  }, [input]);
 
   const inputHandler = (e) => {
     setInput(e.target.value);

@@ -7,15 +7,18 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 const App = () => {
   const [allBooks, setAllBooks] = useState([]);
-
   useEffect(() => {
     getAll().then((res) => setAllBooks(res));
   }, []);
 
   const updateBook = (book, shelf) => {
-    book.shelf = shelf;
-    update(book, shelf).then(() => {
-      getAll().then((res) => setAllBooks(res));
+    update(book, shelf).then((res) => {
+      book.shelf = shelf;
+      let books = allBooks.filter((b) => {
+        return b.id !== book.id;
+      });
+
+      setAllBooks([...books, book]);
     });
   };
 

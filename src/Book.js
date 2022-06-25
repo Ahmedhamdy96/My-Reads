@@ -20,8 +20,8 @@ const Book = ({ updateBook, book }) => {
           }}
         ></div>
         <div className="book-shelf-changer">
-          <select onChange={selectHandler} defaultValue={book.shelf}>
-            <option value="none" disabled>
+          <select onChange={selectHandler} defaultValue={book.shelf || "none"}>
+            <option value="move" disabled>
               Move to...
             </option>
             {options.map((op) => (
